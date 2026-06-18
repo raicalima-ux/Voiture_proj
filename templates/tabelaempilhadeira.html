@@ -1,0 +1,243 @@
+
+{% extends 'base.html' %}
+
+<!--Ryan atualizado 13/06/2026 18:00-->
+
+{% block conteudo %}
+<div class="container-fluid">
+
+    <!-- TÍTULO + BOTÃO -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="titulo-pagina">
+                <i class="bi bi-tools"></i> Empilhadeiras
+            </h2>
+            <p class="text-muted mb-0">Gerencie as empilhadeiras do estoque</p>
+        </div>
+
+        <!--rota para cadastrar nova empilhadeira-->
+        <a href="{{ url_for('cadastroempilhadeira') }}" class="botao-add btn">
+            <i class="bi bi-plus-lg"></i> Nova Empilhadeira
+        </a>
+        <!--Rota pra usar uma empilhadeira-->
+        <a href="{{ url_for('uso_empilhadeira') }}" class="botao-add btn">
+            <i class="bi bi-plus-lg"></i> Uso da Empilhadeira
+        </a>
+    </div>
+
+    <!-- CARD -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            {% if uso or empilhadeiras %}
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <!--topo da tabela onde mostra os campos-->
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Chassi</th>
+                            <th>Modelo</th>
+                            <th>Marca</th>
+                            <th>Ocupação</th>
+                            <th>ID do funcionário</th>
+                            <th>Status</th>
+                            <th>Data e Hora</th>
+                            <th class="text-end">Ações</th>
+                        </tr>
+                    </thead>
+                    <!--tabela divida em duas partes-->
+                    <tbody>
+                        <!--campos das empilhadeiras que estão sendo utilizadas-->
+                        {% for uso in uso %}
+                        <tr>
+                            <td>{{ uso.uso_id }}</td><!--mostra o id-->
+
+                            <td>
+                                <strong>{{ uso.empilhadeira_chassi }}</strong><!--mostra o chassi-->
+                            </td>
+
+                            <td>
+                                <span class="badge bg-secondary">
+                                    {{ uso.empilhadeira_modelo }} <!--mostra o modelo-->
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-secondary">
+                                    {{ uso.empilhadeira_marca }} <!--mostra a marca-->
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-danger">
+                                    OCUPADO
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-secondary">
+                                    {{ uso.funcionario_nome }} <!--mostra o nome de quem está utilizando-->
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-secondary">
+                                    {{ uso.empilhadeira_status }} <!--mostra o status da empilhadeira-->
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-secondary">
+                                    {{ uso.uso_empilhadeira_datahora }} <!--mostra a data e hora de quando começou a utlizar-->
+                                </span>
+                            </td>
+
+                            <td class="text-end">
+                                <!-- Botão do modal pra desocupar -->
+                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
+                                    data-bs-target="#Modal{{uso.uso_id}}">
+                                    <i class="bi bi-arrow-up-right-square"></i>
+                                </button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="Modal{{uso.uso_id}}" tabindex="-1"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel"><strong>Deseja desocupar essa empilhadeira?</strong></h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancelar</button>
+                                                <!--Ação pra desocupar a empilhadeira-->
+                                                <a href="{{ url_for('desocupar_empilhadeira', id=uso.uso_id) }}"
+                                                    class="btn btn-danger">
+                                                    <strong>Desocupar</strong>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                        
+                        <!--campos das empilhadeiras que não estão sendo utilizadas-->
+                        {% for empilhadeira in empilhadeiras %}
+                        <tr>
+                            <td>{{ empilhadeira.id }}</td> <!--mostra o id-->
+
+                            <td>
+                                <strong>{{ empilhadeira.empilhadeira_chassi }}</strong> <!--mostra o chassi-->
+                            </td>
+
+                            <td>
+                                <span class="badge bg-secondary">
+                                    {{ empilhadeira.empilhadeira_modelo }} <!--mostra o modelo-->
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-secondary">
+                                    {{ empilhadeira.empilhadeira_marca }} <!--mostra a marca-->
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-success">
+                                    DESOCUPADO
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-secondary">
+                                    {{ empilhadeira.funcionario_nome }} <!--mostra o nome-->
+                                </span>
+                            </td>
+
+
+                            <td>
+                                <span class="badge bg-secondary">
+                                    {{ empilhadeira.empilhadeira_status }} <!--mostra o status-->
+                                </span>
+                            </td>
+
+
+
+
+                            <td>
+                                <span class="badge bg-secondary">
+                                    {{ empilhadeira.uso_empilhadeira_datahora }} <!--mostra a data e hora-->
+                                </span>
+                            </td>
+
+                            <!-- AÇÕES -->
+                            <td class="text-end">
+
+
+                                <!--ação pra editar a empilhadeira-->
+                                <a href="{{ url_for('editar_empilhadeira', id=empilhadeira.id) }}"
+                                    class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+
+                                <!-- Botão do modal pra excluir -->
+                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
+                                    data-bs-target="#Modal{{empilhadeira.id}}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="Modal{{empilhadeira.id}}" tabindex="-1"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel"><strong>Deseja excluir essa empilhadeira?</strong></h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancelar</button>
+                                                <!--ação pra excluir a empilhadeira-->
+                                                <a href="{{ url_for('deletar_empilhadeira', id=empilhadeira.id) }}"
+                                                    class="btn btn-danger">
+                                                    <strong>Excluir</strong>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+            <!--se não tiver nenhuma empilhadeira cadastrada, cai no else-->
+            {% else %}
+
+            <div class="alert alert-info mb-0">
+                <i class="bi bi-info-circle"></i>
+                Nenhum produto cadastrado.
+            </div>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
